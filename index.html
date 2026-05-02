@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dairy Milk Managment App</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- ========== SCREEN 1: LOGIN ========== -->
+<div id="screenLogin" class="screen active">
+  <div class="bg-blobs"><span></span><span></span><span></span></div>
+  <div class="auth-box">
+    <div class="auth-logo">
+      <span class="logo-icon">🥛</span>
+      <h1>Dairy Milk Managment</h1>
+      <p>किसान • दूध • हिसाब</p>
+    </div>
+    <div class="fg">
+      <label>📱 Mobile Number / User ID</label>
+      <input type="text" id="li_id" placeholder="Mobile number डालें">
+    </div>
+    <div class="fg">
+      <label>🔒 Password</label>
+      <input type="password" id="li_pass" placeholder="Password डालें">
+    </div>
+    <div class="err" id="li_err"></div>
+    <br>
+    <button class="btn btn-green" onclick="sendLoginOTP()">🔐 OTP भेजें और Login करें</button>
+    <button class="btn btn-outline" onclick="goScreen('screenRegister')">✍️ नया Account बनाएं (किसान)</button>
+    <div style="text-align:center;margin-top:12px;">
+      <button class="link-btn" onclick="goScreen('screenForgot')">🔑 Password भूल गए?</button>
+    </div>
+    <div style="margin-top:16px;background:#f0f7f2;border-radius:10px;padding:10px;font-size:11px;color:var(--text-light);text-align:center;">
+      <strong>Admin Login:</strong> ID: <code>admin</code> | Pass: <code>admin123</code>
+    </div>
+  </div>
+</div>
+ 
+<!-- ========== SCREEN 2: REGISTER ========== -->
+<div id="screenRegister" class="screen">
+  <div class="bg-blobs"><span></span><span></span><span></span></div>
+  <div class="auth-box">
+    <div class="auth-logo">
+      <span class="logo-icon">👨‍🌾</span>
+      <h1>किसान Registration</h1>
+      <p>एक बार register करें, हमेशा track रखें</p>
+    </div>
+    <div class="fg"><label>👤 पूरा नाम</label><input type="text" id="rg_name" placeholder="जैसे: रामलाल यादव"></div>
+    <div class="fg"><label>📱 Mobile Number (यही आपका ID होगा)</label><input type="number" id="rg_mobile" placeholder="10 अंकों का नंबर"></div>
+    <div class="fg">
+      <div class="g2">
+        <div><label>🏘️ गाँव</label><input type="text" id="rg_village" placeholder="गाँव का नाम"></div>
+        <div><label>🐄 पशु संख्या</label><input type="number" id="rg_cows" placeholder="जैसे: 3"></div>
+      </div>
+    </div>
+    <div class="fg"><label>🔒 Password बनाएं (कम से कम 4 अक्षर)</label><input type="password" id="rg_pass" placeholder="Password बनाएं"></div>
+    <div class="err" id="rg_err"></div>
+    <div class="suc" id="rg_suc"></div>
+    <br>
+    <button class="btn btn-green" onclick="doRegister()">✅ Register करें</button>
+    <button class="btn btn-outline" onclick="goScreen('screenLogin')">← वापस Login पर</button>
+  </div>
+</div>
+ 
+<!-- ========== SCREEN 3: OTP VERIFY ========== -->
+<div id="screenOTP" class="screen">
+  <div class="bg-blobs"><span></span><span></span><span></span></div>
+  <div class="auth-box">
+    <div class="auth-logo">
+      <span class="logo-icon">📱</span>
+      <h1>OTP Verify करें</h1>
+      <p id="otp_subtitle">6 अंकों का OTP डालें</p>
+    </div>
+ 
+    <div style="background:#f0f7f2;border-radius:12px;padding:12px;text-align:center;margin-bottom:14px;">
+      <div style="font-size:12px;color:var(--text-light);">OTP भेजा गया नंबर पर:</div>
+      <div style="font-size:17px;font-weight:800;color:var(--primary)" id="otp_mobile_show">XXXXXXXXXX</div>
+    </div>
+ 
+    <div style="background:#fff3e0;border:2px dashed var(--accent);border-radius:10px;padding:10px;text-align:center;margin-bottom:14px;">
+      <div style="font-size:11px;color:#e65100;font-weight:600;">🔔 Demo Mode — असली app में WhatsApp पर आता</div>
+      <div style="font-size:26px;font-weight:800;color:var(--accent);letter-spacing:8px;margin-top:4px;" id="otp_display">------</div>
+    </div>
+ 
+    <div class="otp-wrap">
+      <input type="number" class="otp-input" id="o0" oninput="otpNext(this,0)">
+      <input type="number" class="otp-input" id="o1" oninput="otpNext(this,1)">
+      <input type="number" class="otp-input" id="o2" oninput="otpNext(this,2)">
+      <input type="number" class="otp-input" id="o3" oninput="otpNext(this,3)">
+      <input type="number" class="otp-input" id="o4" oninput="otpNext(this,4)">
+      <input type="number" class="otp-input" id="o5" oninput="otpNext(this,5)">
+    </div>
+    <div class="otp-timer">⏳ OTP expire: <span id="otp_countdown">120</span> सेकंड</div>
+    <div class="err" id="otp_err"></div>
+    <div class="suc" id="otp_suc"></div>
+    <button class="btn btn-green" onclick="verifyOTP()">✅ OTP Verify करें</button>
+    <button class="btn btn-outline" onclick="resendOTP()">🔄 OTP फिर से भेजें</button>
+    <div style="text-align:center;margin-top:10px;"><button class="link-btn" onclick="goScreen('screenLogin')">← वापस जाएं</button></div>
+  </div>
+</div>
+ 
+<!-- ========== SCREEN 4: FORGOT PASSWORD ========== -->
+<div id="screenForgot" class="screen">
+  <div class="bg-blobs"><span></span><span></span><span></span></div>
+  <div class="auth-box">
+    <div class="auth-logo">
+      <span class="logo-icon">🔑</span>
+      <h1>Password Reset</h1>
+      <p>Mobile number से नया password बनाएं</p>
+    </div>
+ 
+    <div id="fp_step1">
+      <div class="fg"><label>📱 Registered Mobile Number / Admin ID</label><input type="text" id="fp_mobile" placeholder="Mobile number या admin ID"></div>
+      <div class="err" id="fp_err1"></div>
+      <br>
+      <button class="btn btn-green" onclick="forgotSendOTP()">📲 OTP भेजें</button>
+    </div>
+ 
+    <div id="fp_step2" style="display:none">
+      <div style="background:#fff3e0;border:2px dashed var(--accent);border-radius:10px;padding:10px;text-align:center;margin-bottom:14px;">
+        <div style="font-size:11px;color:#e65100;font-weight:600;">🔔 Demo OTP:</div>
+        <div style="font-size:26px;font-weight:800;color:var(--accent);letter-spacing:8px;" id="fp_otp_display">------</div>
+      </div>
+      <div class="otp-wrap">
+        <input type="number" class="otp-input" id="fp0" oninput="fpNext(this,0)">
+        <input type="number" class="otp-input" id="fp1" oninput="fpNext(this,1)">
+        <input type="number" class="otp-input" id="fp2" oninput="fpNext(this,2)">
+        <input type="number" class="otp-input" id="fp3" oninput="fpNext(this,3)">
+        <input type="number" class="otp-input" id="fp4" oninput="fpNext(this,4)">
+        <input type="number" class="otp-input" id="fp5" oninput="fpNext(this,5)">
+      </div>
+      <div class="fg"><label>🔒 नया Password</label><input type="password" id="fp_newpass" placeholder="नया password डालें"></div>
+      <div class="err" id="fp_err2"></div>
+      <div class="suc" id="fp_suc"></div>
+      <button class="btn btn-green" onclick="forgotVerify()">✅ Password Reset करें</button>
+    </div>
+    <button class="btn btn-outline" onclick="goScreen('screenLogin')" style="margin-top:8px">← वापस Login पर</button>
+  </div>
+</div>
+ 
+<!-- ========== SCREEN 5: MAIN APP ========== -->
+<div id="screenApp" class="screen">
+  <header class="app-header">
+    <div class="hl">
+      <span class="logo">🥛</span>
+      <div><h2>Gramin Dairy</h2><small id="h_role">Manager</small></div>
+    </div>
+    <div class="hr">
+      <span class="user-badge" id="h_user">👤 Admin</span>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </header>
+ 
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('dashboard')" id="tab-dashboard"><span class="ti">📊</span>Dashboard</button>
+    <button class="nav-tab" onclick="switchTab('entry')" id="tab-entry" style="display:none"><span class="ti">➕</span>Entry</button>
+    <button class="nav-tab" onclick="switchTab('records')" id="tab-records"><span class="ti">📋</span>Records</button>
+    <button class="nav-tab" onclick="switchTab('withdraw')" id="tab-withdraw" style="display:none"><span class="ti">💸</span>Withdraw</button>
+    <button class="nav-tab" onclick="switchTab('kisans')" id="tab-kisans" style="display:none"><span class="ti">👨‍🌾</span>किसान</button>
+    <button class="nav-tab" onclick="switchTab('wreq')" id="tab-wreq" style="display:none"><span class="ti">📤</span>Requests</button>
+    <button class="nav-tab" onclick="switchTab('admin')" id="tab-admin" style="display:none"><span class="ti">⚙️</span>Admin</button>
+  </nav>
+ 
+  <!-- DASHBOARD -->
+  <div class="tab-content active" id="content-dashboard">
+    <div class="stats-grid">
+      <div class="stat-card green"><div class="si">🥛</div><div class="sv" id="st_milk">0L</div><div class="sl">आज का कुल दूध</div></div>
+      <div class="stat-card orange"><div class="si">💰</div><div class="sv" id="st_amt">₹0</div><div class="sl">आज की कमाई</div></div>
+      <div class="stat-card blue"><div class="si">☀️</div><div class="sv" id="st_morn">0L</div><div class="sl">सुबह का दूध</div></div>
+      <div class="stat-card red"><div class="si">🌙</div><div class="sv" id="st_eve">0L</div><div class="sl">शाम का दूध</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📅 आज की Entry Summary</div>
+      <div class="today-summary">
+        <div class="ts-box"><div class="tbi">☀️</div><div class="tbt">MORNING</div><div class="tbv" id="s_mm">0 L</div><div class="tbm" id="s_ma">₹0</div></div>
+        <div class="ts-box"><div class="tbi">🌙</div><div class="tbt">EVENING</div><div class="tbv" id="s_em">0 L</div><div class="tbm" id="s_ea">₹0</div></div>
+      </div>
+      <div id="admin_month" style="display:none">
+        <div style="display:flex;justify-content:space-between;padding:10px;background:#f0f7f2;border-radius:10px;font-weight:700;">
+          <span>📆 इस महीने कुल</span><span id="st_month" style="color:var(--primary)">₹0</span>
+        </div>
+      </div>
+    </div>
+    <div class="card"><div class="card-title">🕐 हाल की Entries</div><div id="recentEntries"><div class="empty-state"><div class="ei">📭</div><p>कोई entry नहीं</p></div></div></div>
+  </div>
+ 
+  <!-- ENTRY -->
+  <div class="tab-content" id="content-entry">
+    <div class="card">
+      <div class="card-title">➕ दूध Entry करें</div>
+      <div class="entry-form">
+        <div id="kisan_sel_wrap" style="display:none">
+          <div class="ff"><label>👨‍🌾 किसान चुनें</label><select id="en_kisan"><option value="">-- किसान चुनें --</option></select></div>
+        </div>
+        <div class="r2">
+          <div class="ff"><label>📅 तारीख</label><input type="date" id="en_date"></div>
+          <div class="ff"><label>⏰ समय</label><select id="en_shift"><option value="morning">☀️ सुबह</option><option value="evening">🌙 शाम</option></select></div>
+        </div>
+        <div class="r3">
+          <div class="ff"><label>🥛 दूध (L)</label><input type="number" id="en_milk" placeholder="0.0" step="0.1" oninput="calcRate()"></div>
+          <div class="ff"><label>🧈 FAT %</label><input type="number" id="en_fat" placeholder="0.0" step="0.1" oninput="calcRate()"></div>
+          <div class="ff"><label>💧 SNF %</label><input type="number" id="en_snf" placeholder="0.0" step="0.1" oninput="calcRate()"></div>
+        </div>
+        <div class="rate-box">
+          <div class="rb-l">Rate = (FAT × FatRate) + (SNF × SnfRate)</div>
+          <div class="rb-v">₹<span id="cr_rate">0.00</span>/L</div>
+          <div class="rb-s">कुल Amount: <strong style="color:var(--accent);font-size:15px">₹<span id="cr_amt">0.00</span></strong></div>
+        </div>
+        <button class="btn btn-green" onclick="saveEntry()">✅ Entry Save करें</button>
+        <div class="err" id="en_err"></div>
+        <div class="suc" id="en_suc"></div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- RECORDS -->
+  <div class="tab-content" id="content-records">
+    <div class="card">
+      <div class="card-title">🔍 Filter</div>
+      <div class="filter-bar">
+        <input type="date" id="f_date" onchange="renderRecords()">
+        <select id="f_shift" onchange="renderRecords()"><option value="">सभी समय</option><option value="morning">☀️ सुबह</option><option value="evening">🌙 शाम</option></select>
+        <select id="f_kisan" onchange="renderRecords()" style="display:none"><option value="">सभी किसान</option></select>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 सभी Entries</div>
+      <div class="records-table">
+        <table>
+          <thead><tr><th>तारीख</th><th>समय</th><th id="th_kisan" style="display:none">किसान</th><th>दूध(L)</th><th>FAT%</th><th>SNF%</th><th>Rate</th><th>Amount</th></tr></thead>
+          <tbody id="rec_body"></tbody>
+        </table>
+        <div id="rec_empty" class="empty-state"><div class="ei">📭</div><p>कोई record नहीं</p></div>
+      </div>
+      <div id="rec_total" style="display:none;background:#f0f7f2;border-radius:10px;padding:10px;margin-top:10px;display:flex;justify-content:space-between;font-weight:700;">
+        <span>Total:</span><span id="rec_total_val" style="color:var(--primary)"></span>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- WITHDRAW (Kisan only) -->
+  <div class="tab-content" id="content-withdraw">
+    <div class="card">
+      <div class="card-title">💰 आपका Balance</div>
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:13px;color:var(--text-light);font-weight:600;">कुल Earnings</div>
+        <div style="font-size:38px;font-weight:800;color:var(--primary)" id="wd_total_earn">₹0</div>
+        <div style="display:flex;gap:16px;justify-content:center;margin-top:12px">
+          <div style="text-align:center"><div style="font-size:11px;color:var(--text-light)">Withdrawn</div><div style="font-size:18px;font-weight:800;color:var(--red)" id="wd_withdrawn">₹0</div></div>
+          <div style="font-size:24px;color:var(--border);align-self:center">|</div>
+          <div style="text-align:center"><div style="font-size:11px;color:var(--text-light)">Available</div><div style="font-size:18px;font-weight:800;color:var(--primary-light)" id="wd_available">₹0</div></div>
+          <div style="font-size:24px;color:var(--border);align-self:center">|</div>
+          <div style="text-align:center"><div style="font-size:11px;color:var(--text-light)">Pending</div><div style="font-size:18px;font-weight:800;color:var(--accent)" id="wd_pending">₹0</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">💸 Withdraw Request करें</div>
+      <div style="display:grid;gap:11px">
+        <div class="ff"><label>💵 Amount (₹)</label><input type="number" id="wd_amount" placeholder="कितने रुपए निकालने हैं?" min="1"></div>
+        <div class="ff"><label>📝 Note (optional)</label><input type="text" id="wd_note" placeholder="जैसे: खाद खरीदनी है"></div>
+        <div class="err" id="wd_err"></div>
+        <div class="suc" id="wd_suc"></div>
+        <button class="btn btn-green" onclick="submitWithdraw()">📤 Request भेजें</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 पिछली Requests</div>
+      <div id="wd_history"><div class="empty-state"><div class="ei">📭</div><p>कोई request नहीं</p></div></div>
+    </div>
+  </div>
+ 
+  <!-- WITHDRAW REQUESTS (Admin only) -->
+  <div class="tab-content" id="content-wreq">
+    <div class="card">
+      <div class="card-title">📤 Withdraw Requests <span id="wreq_badge" style="background:var(--red);color:#fff;border-radius:20px;padding:2px 8px;font-size:11px;margin-left:6px">0</span></div>
+      <div id="wreq_list"><div class="empty-state"><div class="ei">📭</div><p>कोई pending request नहीं</p></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">✅ Completed Requests</div>
+      <div id="wreq_done"><div class="empty-state"><div class="ei">✅</div><p>कोई completed request नहीं</p></div></div>
+    </div>
+  </div>
+ 
+  <!-- KISANS -->
+  <div class="tab-content" id="content-kisans">
+    <div class="card"><div class="card-title">👨‍🌾 सभी Registered किसान</div><div class="kisan-grid" id="kisan_list"><div class="empty-state"><div class="ei">👨‍🌾</div><p>कोई किसान नहीं</p></div></div></div>
+  </div>
+ 
+  <!-- ADMIN -->
+  <div class="tab-content" id="content-admin">
+    <div class="card">
+      <div class="card-title">⚙️ Rate Settings</div>
+      <p style="font-size:11px;color:var(--text-light);margin-bottom:11px">Formula: Rate = (FAT × FatRate) + (SNF × SnfRate) | Amount = Rate × Liter</p>
+      <div style="margin-bottom:12px">
+        <h4 style="font-size:11px;color:var(--text-light);margin-bottom:7px;text-transform:uppercase;letter-spacing:1px">🐄 गाय का दूध</h4>
+        <div class="rate-grid">
+          <div class="rate-item"><label>FAT Rate (₹/unit)</label><input type="number" id="cow_fat" step="0.1" value="4.0" oninput="saveRates()"></div>
+          <div class="rate-item"><label>SNF Rate (₹/unit)</label><input type="number" id="cow_snf" step="0.1" value="2.0" oninput="saveRates()"></div>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:11px;color:var(--text-light);margin-bottom:7px;text-transform:uppercase;letter-spacing:1px">🐃 भैंस का दूध</h4>
+        <div class="rate-grid">
+          <div class="rate-item"><label>FAT Rate (₹/unit)</label><input type="number" id="buf_fat" step="0.1" value="5.0" oninput="saveRates()"></div>
+          <div class="rate-item"><label>SNF Rate (₹/unit)</label><input type="number" id="buf_snf" step="0.1" value="2.5" oninput="saveRates()"></div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="card">
+      <div class="card-title">🔐 Admin Password बदलें</div>
+      <div style="display:grid;gap:9px">
+        <div class="ff"><label>नया Password</label><input type="password" id="new_admin_pass" placeholder="नया password"></div>
+        <button class="btn btn-green" style="max-width:175px" onclick="changeAdminPass()">Password बदलें</button>
+        <div class="suc" id="pass_suc" style="display:none">✅ Password बदल गया!</div>
+      </div>
+    </div>
+ 
+    <div class="card">
+      <div class="card-title">📲 WhatsApp Report भेजें</div>
+      <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">आज का पूरा report WhatsApp पर भेजें। नंबर: <strong>9102188725</strong></p>
+      <button class="wa-btn" onclick="sendWhatsApp()"><span style="font-size:19px">📱</span> WhatsApp पर Report भेजें</button>
+      <p style="font-size:10px;color:var(--text-light);margin-top:5px;text-align:center">⚠️ WhatsApp खुलेगा — Send दबाएं | रोज रात 9 बजे auto भेजता है</p>
+    </div>
+ 
+    <div class="card">
+      <div class="card-title">📥 Excel Download</div>
+      <button class="btn btn-green" onclick="downloadExcel()" style="background:linear-gradient(135deg,#1565c0,#1976d2)">📥 Excel (.csv) Download करें</button>
+    </div>
+ 
+    <div class="card" style="border:2px solid var(--red)">
+      <div class="card-title" style="color:var(--red)">🗑️ सब Data Delete</div>
+      <p style="font-size:12px;color:var(--text-light);margin-bottom:9px">सावधान! सब entries permanently delete होंगी।</p>
+      <button onclick="clearAllData()" style="background:var(--red);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">सब Delete करें</button>
+    </div>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
